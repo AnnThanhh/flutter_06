@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/database/DAO/users_dao.dart';
 
 class BaiTapDanhBa extends StatefulWidget {
   const BaiTapDanhBa({super.key});
@@ -8,39 +9,109 @@ class BaiTapDanhBa extends StatefulWidget {
 }
 
 class _BaiTapDanhBaState extends State<BaiTapDanhBa> {
-  final List<Map<String, String>> listUser = [
-    {
-      'name': 'Nguyen Van A',
-      'email': 'nguyenvana@example.com',
-      'country': 'Vietnam',
-    },
-    {
-      'name': 'Tran Thi B',
-      'email': 'tranthib@example.com',
-      'country': 'Vietnam',
-    },
-    {'name': 'Le Van C', 'email': 'levanc@example.com', 'country': 'Vietnam'},
-    {
-      'name': 'Pham Thi D',
-      'email': 'phamthid@example.com',
-      'country': 'Vietnam',
-    },
-    {
-      'name': 'Hoang Van E',
-      'email': 'hoangvane@example.com',
-      'country': 'Vietnam',
-    },
-    {'name': 'Bui Thi F', 'email': 'buithif@example.com', 'country': 'Vietnam'},
-    {
-      'name': 'Dang Van G',
-      'email': 'dangvang@example.com',
-      'country': 'Vietnam',
-    },
-    {'name': 'Vu Thi H', 'email': 'vuthih@example.com', 'country': 'Vietnam'},
-    {'name': 'Do Van I', 'email': 'dovani@example.com', 'country': 'Vietnam'},
-    {'name': 'Ngo Thi J', 'email': 'ngothij@example.com', 'country': 'Vietnam'},
-    {'name': 'John Smith', 'email': 'johnsmith@example.com', 'country': 'USA'},
-  ];
+  var listUser = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadData();
+  }
+
+  void loadData() async {
+    var listUserDB = await selectDataUser();
+    setState(() {
+      listUser = listUserDB;
+    });
+  }
+
+  void showUserModal({Map<String, dynamic>? user}) {
+    // Kiểm tra xem có phải là chỉnh sửa hay không
+    final isEdit = user != null;
+
+    //tạo controller để lấy dữ liệu từ textfield
+    var nameController = TextEditingController(text: user?["name"] ?? "");
+    var emailController = TextEditingController(text: user?["email"] ?? "");
+    var ageController = TextEditingController(
+      text: user?["age"].toString() ?? "",
+    );
+
+    showModalBottomSheet<void>(
+      showDragHandle: true,
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 500,
+          color: Colors.white,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  isEdit ? "Cập nhật" : "Thêm mới",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                TextField(
+                  controller: nameController,
+                  decoration: InputDecoration(
+                    labelText: "Họ tên",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                SizedBox(height: 16),
+                TextField(
+                  controller: emailController,
+                  decoration: InputDecoration(
+                    labelText: "Email",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                SizedBox(height: 16),
+                TextField(
+                  controller: ageController,
+                  decoration: InputDecoration(
+                    labelText: "Tuổi",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                ElevatedButton(
+                  child: const Text("Lưu"),
+                  onPressed: () async {
+                    //trim(): dùng để loại bỏ khoảng trắng thừa ở đầu và cuối chuỗi
+                    final name = nameController.text.trim();
+                    final email = emailController.text.trim();
+                    final age = ageController.text.trim();
+
+                    if (name.isEmpty || email.isEmpty || age.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Vui lòng điền đầy đủ thông tin"),
+                        ),
+                      );
+                      return;
+                    }
+                    var newUser = {'name': name, 'email': email, 'age': age};
+
+                    if (isEdit) {
+                      await updateDataUser(user["id"], newUser);
+                    } else {
+                      await insertDataUser(newUser);
+                    }
+
+                    //load dữ liệu
+                    loadData();
+                    //đóng modal
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +120,9 @@ class _BaiTapDanhBaState extends State<BaiTapDanhBa> {
         title: const Text('Danh bạ'),
         backgroundColor: Colors.deepOrange,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(onPressed: () => showUserModal(), icon: Icon(Icons.add)),
+        ],
       ),
       body: ListView.builder(
         itemCount: listUser.length,
@@ -66,12 +140,24 @@ class _BaiTapDanhBaState extends State<BaiTapDanhBa> {
               ),
             ),
             title: Text(item['name']!),
-            subtitle: Text('${item['email']} | ${item['country']}'),
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Bạn chọn ${item['name']}')),
-              );
-            },
+            subtitle: Text('${item['email']} | ${item['age']}'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  onPressed: () => showUserModal(user: item),
+                  icon: Icon(Icons.edit),
+                ),
+                IconButton(
+                  onPressed: () {
+                    //nên có thêm 1 popup xác nhận trước khi xóa
+                    deleteDataUser(item['id']);
+                    loadData();
+                  },
+                  icon: Icon(Icons.delete),
+                ),
+              ],
+            ),
           );
         },
       ),

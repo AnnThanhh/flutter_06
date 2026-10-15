@@ -30,16 +30,39 @@ class Ui_db extends StatelessWidget {
               child: Text("Xóa bảng"),
             ),
             ElevatedButton(
-              onPressed: () {
-                selectDataUser();
+              onPressed: () async {
+                print(await selectDataUser());
               },
               child: Text("Xem dữ liệu"),
             ),
             ElevatedButton(
               onPressed: () {
-                insertDataUser();
+                var user = {
+                  "name": "John Doe",
+                  "email": "johndoe@example.com",
+                  "age": 30,
+                };
+                insertDataUser(user);
               },
               child: Text("Thêm dữ liệu"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                var user = {
+                  "name": "Jane Doe",
+                  "email": "janedoe@example.com",
+                  "age": 25,
+                };
+                updateDataUser(4,user);
+              },
+              child: Text("Cập nhật dữ liệu"),
+            ),
+
+            ElevatedButton(
+              onPressed: () {
+                deleteDataUser(5);
+              },
+              child: Text("Xóa dữ liệu"),
             ),
           ],
         ),
