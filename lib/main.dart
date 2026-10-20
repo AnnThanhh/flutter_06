@@ -6,6 +6,7 @@ import 'pages/home_page.dart';
 import 'pages/page_a.dart';
 import 'pages/page_b.dart';
 import 'pages/page_c.dart';
+import 'pages/home_product.dart';
 
 void main() {
   runApp(const MyApp());
@@ -38,11 +39,9 @@ class _MainPageState extends State<MainPage> {
 
   static const List<Widget> _pages = [
     HomePage(),
-    PageA(),
-    PageB(),
-    PageC(),
     BaiTapDanhBa(),
     Ui_db(),
+    HomeProductPage(),
   ];
 
   @override
@@ -59,11 +58,15 @@ class _MainPageState extends State<MainPage> {
         onTap: (index) => setState(() => _selectedIndex = index),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Page A'),
-          BottomNavigationBarItem(icon: Icon(Icons.details), label: 'Page B'),
-          BottomNavigationBarItem(icon: Icon(Icons.cabin), label: 'Page C'),
+          // BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Page A'),
+          // BottomNavigationBarItem(icon: Icon(Icons.details), label: 'Page B'),
+          // BottomNavigationBarItem(icon: Icon(Icons.cabin), label: 'Page C'),
           BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Danh bạ'),
           BottomNavigationBarItem(icon: Icon(Icons.storage), label: 'Database'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: 'Home Product',
+          ),
         ],
       ),
     );
