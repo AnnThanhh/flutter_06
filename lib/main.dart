@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_app/pages/login_page.dart';
 
 import 'pages/danh_ba.dart';
 import 'database/ui.dart';
 import 'pages/home_page.dart';
-import 'pages/page_a.dart';
-import 'pages/page_b.dart';
-import 'pages/page_c.dart';
 import 'pages/home_product.dart';
 
 void main() {
@@ -21,6 +20,16 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Routing',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.deepOrange,
+          foregroundColor: Colors.white,
+          // Android: màu + icon của statusbar; iOS: statusBarBrightness.dark = icon sáng
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Colors.deepOrange,
+            statusBarIconBrightness: Brightness.light,
+            statusBarBrightness: Brightness.dark,
+          ),
+        ),
       ),
       home: const MainPage(),
     );
@@ -39,9 +48,10 @@ class _MainPageState extends State<MainPage> {
 
   static const List<Widget> _pages = [
     HomePage(),
-    BaiTapDanhBa(),
-    Ui_db(),
+    // BaiTapDanhBa(),
+    // Ui_db(),
     HomeProductPage(),
+    LoginPage(),
   ];
 
   @override
@@ -61,12 +71,13 @@ class _MainPageState extends State<MainPage> {
           // BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Page A'),
           // BottomNavigationBarItem(icon: Icon(Icons.details), label: 'Page B'),
           // BottomNavigationBarItem(icon: Icon(Icons.cabin), label: 'Page C'),
-          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Danh bạ'),
-          BottomNavigationBarItem(icon: Icon(Icons.storage), label: 'Database'),
+          // BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Danh bạ'),
+          // BottomNavigationBarItem(icon: Icon(Icons.storage), label: 'Database'),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart),
             label: 'Home Product',
           ),
+          BottomNavigationBarItem(icon: Icon(Icons.login), label: 'Login'),
         ],
       ),
     );
