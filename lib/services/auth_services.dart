@@ -52,7 +52,7 @@ class AuthServices {
   static Future<dynamic> getProfile(token) async {
     final url = Uri.parse("$DOMAIN_API/api/Users/getProfile");
     try {
-      final response = await http.get(
+      final response = await http.post(
         url,
         headers: {"Content-Type": "application/json", "Authorization": "$token"},
       );

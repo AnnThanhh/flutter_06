@@ -1,1 +1,1 @@
-final DOMAIN_API = "https://apistore.cybersoft.edu.vn/";
+final DOMAIN_API = "https://apistore.cybersoft.edu.vn";

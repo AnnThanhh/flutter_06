@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/providers/auth_provider.dart';
 import 'package:flutter_app/services/auth_services.dart';
 import 'package:flutter_app/utils/local_storage.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -14,27 +16,35 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
 
   // Hàm xử lý đăng nhập
-  void handleLogin() {
+  Future<void> handleLogin() async {
+    //dùng để lấy instance của AuthProvider để cập nhật trạng thái đăng nhập, listen: false để không rebuild UI khi thay đổi trạng thái
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
     final data = {
       "email": _emailController.text.trim(),
       "password": _passwordController.text.trim(),
     };
 
-    AuthServices.login(data)
-        .then((result) {
-          // Lưu token vào local storage
-          saveData("ACCESS_TOKEN", result["accessToken"]);
-          // Hiển thị thông báo đăng nhập thành công
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text("Login successfull")));
-        })
-        .catchError((err) {
-          // Hiển thị thông báo đăng nhập thất bại
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text("Login failed: $err")));
-        });
+    try {
+      final result = await AuthServices.login(data);
+      final accessToken = result["accessToken"];
+
+      // Lưu token vào local storage
+      await saveData("ACCESS_TOKEN", accessToken);
+
+      //cập nhật trạng thái đăng nhập trên provider
+      authProvider.setLogin(accessToken);
+
+      // Hiển thị thông báo đăng nhập thành công
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Login successfull")));
+    } catch (err) {
+      // Hiển thị thông báo đăng nhập thất bại
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Login failed: $err")));
+    }
   }
 
   @override
