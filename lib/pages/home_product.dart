@@ -33,7 +33,7 @@ class _HomeProductPageState extends State<HomeProductPage> {
         })
         //nếu có lỗi sẽ được catchError bắt và xử lý
         .catchError((err) {
-          print("Error loading products: $err");
+          // print("Error loading products: $err");
         });
   }
 
@@ -153,7 +153,7 @@ class _HomeProductPageState extends State<HomeProductPage> {
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: () {
-                              print(product["id"]);
+                              // print(product["id"]);
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(

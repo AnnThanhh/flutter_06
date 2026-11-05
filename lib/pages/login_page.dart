@@ -4,6 +4,7 @@ import 'package:flutter_app/services/auth_services.dart';
 import 'package:flutter_app/utils/local_storage.dart';
 import 'package:provider/provider.dart';
 
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -20,6 +21,9 @@ class _LoginPageState extends State<LoginPage> {
     //dùng để lấy instance của AuthProvider để cập nhật trạng thái đăng nhập, listen: false để không rebuild UI khi thay đổi trạng thái
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
+    //sử dụng để lấy instance của authbloc
+    // final authBloc = context.read<AuthBloc>();
+
     final data = {
       "email": _emailController.text.trim(),
       "password": _passwordController.text.trim(),
@@ -34,6 +38,9 @@ class _LoginPageState extends State<LoginPage> {
 
       //cập nhật trạng thái đăng nhập trên provider
       authProvider.setLogin(accessToken);
+
+      //thực hiện cập nhật dữ liệu đăng nhập trên bloc
+      // authBloc.add(LoginEvent(accessToken));
 
       // Hiển thị thông báo đăng nhập thành công
       ScaffoldMessenger.of(

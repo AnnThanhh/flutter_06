@@ -17,7 +17,11 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> fetchProfile() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
+    // final authBloc = context.read<AuthBloc>();
+
     final accessToken = authProvider.accesstoken;
+
+    // final accessToken = authBloc.state.accessToken;
     try {
       AuthServices.getProfile(accessToken).then((value) {
         setState(() {
@@ -26,19 +30,22 @@ class _ProfilePageState extends State<ProfilePage> {
       });
     } catch (e) {
       // Handle error
-      print("Failed to fetch profile: $e");
+      // print("Failed to fetch profile: $e");
     }
   }
 
   Future<void> handleLogout() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
+     // final authBloc = context.read<AuthBloc>();
+
     try {
       authProvider.setLogout();
+      // authBloc.add(LogoutEvent());
 
       deleteData("ACCESS_TOKEN");
     } catch (e) {
-      print("Failed to logout: $e");
+      // print("Failed to logout: $e");
     }
   }
 
